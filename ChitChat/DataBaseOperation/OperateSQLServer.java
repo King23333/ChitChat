@@ -153,7 +153,6 @@ public class OperateSQLServer {
 	public void updateLoggingStatus(int Status, String userID, String IP) {}
 	//更新聊天信息
 	public void saveConversationData(){}
-	//添加在线用户到Online列表里
 	//把在线用户的IP和userID写入在线数据库onlineUsers
 	public void addUserToOnlineUsers(String IP, int userID) {
 		try {
@@ -172,8 +171,8 @@ public class OperateSQLServer {
 			e.printStackTrace();
 		}
 	}
-	//从online列表里删除离线用户
-	//把离线用户的IP和userID写入在线数据库onlineUsers
+	
+	//把离线用户的IP和userID从在线数据库onlineUsers删除
 	public void deleteUserToOnlineUsers(int userID) {
 		try {
 			statement = connection.createStatement();
@@ -191,8 +190,24 @@ public class OperateSQLServer {
 			e.printStackTrace();
 		}
 	}
+	//获取在线数据库onlineUsers的结果集
+	public ResultSet getOnlineUsers() {
+		try {
+			statement = connection.createStatement();
+			String sql = "select * from onlineUsers";
+			resultSet = statement.executeQuery(sql);
+			resultSet.next();
+			while(resultSet != null) {
+				System.out.println(resultSet.getString(1)+" "+resultSet.getInt(2));
+				resultSet.next();
+			}
+			return resultSet;
+		} catch (SQLException e) {
+			System.out.println("在线数据库读取结束!");
+		}
+		return null;
+	}
 	//从在线列表中通过userID获取对应的IP
-	//根据在线ID获取数据库中对应的IP
 	public String getContactsIP(int userID) {
 		try {
 			statement = connection.createStatement();
@@ -212,7 +227,7 @@ public class OperateSQLServer {
 		}
 		return null;
 	}
-	//通过userID获取对应的名字
+
 	//通过userID从userInformation表中获取对应的nickname
 	public String getContactsNickname(int userID) {
 		try {
@@ -231,7 +246,7 @@ public class OperateSQLServer {
 		}
 		return null;
 	}
-	//获取userID列表里contactsID的名字
+
 	//通过查找userID的好友列表来查询contactsID的remark
 	public String getContactsNickname(int userID, int contactsID) {
 		try {
@@ -250,7 +265,7 @@ public class OperateSQLServer {
 		}
 		return null;
 	}
-	//获取对应userID的好友列表
+	
 	//通过查找userID获取好友列表结果集
 	public ResultSet getFriendList(int userID) {
 		try {
@@ -263,7 +278,7 @@ public class OperateSQLServer {
 		}
 		return null;
 	}
-	//获取对应userID的个人资料
+
 	//通过查找userID获取对应的个人资料
 	public ResultSet getPersonalInformation(int userID) {
 		try {
@@ -276,9 +291,9 @@ public class OperateSQLServer {
 		}
 		return null;
 	}
-//	public static void main(String args[]) {
-//		OperateSQLServer oss = new OperateSQLServer();
-//		oss.connectToDatabase();
+	public static void main(String args[]) {
+		OperateSQLServer oss = new OperateSQLServer();
+		oss.connectToDatabase();
 //		oss.regesterUserInformation("nick", "123", "男", "9-9", "1233@qq.com", "17768689898", "你好");
 //		oss.getContactsIP(29);
 //		oss.getContactsNickname(userID, contactsID)
@@ -292,8 +307,9 @@ public class OperateSQLServer {
 //		oss.updateUserImformation(33, "www", "男", "1230-2-2", "123ss@qq.com", "我就是我");
 //		oss.updateUserPassword(34, "1234");
 //		oss.addNewContacts(33, 34, "小猫");
-//		oss.closeDatabase();
-//	}
+		oss.getOnlineUsers();
+		oss.closeDatabase();
+	}
 	
 }
 
